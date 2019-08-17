@@ -143,9 +143,3 @@ class App extends React.Component {
 export default App;
 
 
-// document
-// .querySelector('.player-' + activePlayer + '-panel')
-// .classList.add('winner');
-// document
-// .querySelector('.player-' + activePlayer + '-panel')
-// .classList.remove('active');
