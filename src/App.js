@@ -5,7 +5,7 @@ import PlayerCard from './components/PlayerCard';
 import Dice from './components/Dice';
 
 const defaultState = {
-  activePlayer: 0,
+  activePlayer: 1,
   playerOneTotal: 0,
   playerTwoTotal: 0,
   roundScore: 0,
@@ -23,7 +23,7 @@ class App extends React.Component {
   };
   nextPlayer() {
     let { activePlayer } = this.state;
-    activePlayer === 0 ? (activePlayer = 1) : (activePlayer = 0);
+    activePlayer === 1 ? (activePlayer = 2) : (activePlayer = 1);
     this.setState({ activePlayer, roundScore: 0, lastDice: 0 });
   }
   onRoll() {
@@ -31,15 +31,12 @@ class App extends React.Component {
     if (gameIsPlaying) {
       let roundScore = 0;
       //Run a number
-      console.log('Roll dice!');
       const diceOne = Math.floor(Math.random() * 6 + 1);
       const diceTwo = Math.floor(Math.random() * 6 + 1);
       // Set state and display number
       if (diceOne !== 1 && diceTwo !== 1) {
         roundScore += diceOne + diceTwo;
       } else {
-        console.log('Got one!');
-
         this.nextPlayer();
       }
       return this.setState({ diceOne, diceTwo, roundScore });
@@ -60,32 +57,29 @@ class App extends React.Component {
         winner,
       } = this.state;
       // Add current score to total score
-      activePlayer === 0
+      activePlayer === 1
         ? (playerOneTotal += roundScore)
         : (playerTwoTotal += roundScore);
-      console.log('Player one ' + playerOneTotal);
-      console.log('Player two ' + playerTwoTotal);
       //Check for winner
       if (playerOneTotal >= winningScore) {
-        console.log('player one won');
-        winner = 0;
-        gameIsPlaying = false;
-      } else if (playerTwoTotal >= winningScore) {
-        console.log('player one won');
         winner = 1;
         gameIsPlaying = false;
+      } else if (playerTwoTotal >= winningScore) {
+        winner = 2;
+        gameIsPlaying = false;
       } else {
-        console.log('nobody won yet');
         this.nextPlayer();
       }
       this.setState({ playerOneTotal, playerTwoTotal, winner, gameIsPlaying });
     }
   }
   initialize() {
-    const {winningScore} = this.state
-    this.setState(prevState=>({
-      ...prevState,...defaultState, winningScore
-    }))
+    const { winningScore } = this.state;
+    this.setState(prevState => ({
+      ...prevState,
+      ...defaultState,
+      winningScore,
+    }));
   }
   render() {
     const {
@@ -103,18 +97,18 @@ class App extends React.Component {
         <PlayerCard
           totalScore={playerOneTotal}
           roundScore={roundScore}
-          player={0}
+          player={1}
           activePlayer={activePlayer}
           winner={winner}
         />
         <PlayerCard
           totalScore={playerTwoTotal}
           roundScore={roundScore}
-          player={1}
+          player={2}
           activePlayer={activePlayer}
           winner={winner}
         />
-        <button className='btn-new' onClick={()=>this.initialize()}>
+        <button className='btn-new' onClick={() => this.initialize()}>
           <i className='ion-ios-plus-outline' />
           New game
         </button>
@@ -126,13 +120,14 @@ class App extends React.Component {
           <i className='ion-ios-download-outline' />
           Hold
         </button>
+        <div className='win-score'>WINNING SCORE:
         <input
           type='number'
-          placeholder='Winning score'
-          className='win-score'
+          className='win-score-input'
           value={winningScore}
           onChange={e => this.onWinningScoreChange(e)}
-        />
+        /></div>
+       
         <Dice diceNumber={diceOne} dice={1} />
         <Dice diceNumber={diceTwo} dice={2} />
       </div>
@@ -141,5 +136,3 @@ class App extends React.Component {
 }
 
 export default App;
-
-
